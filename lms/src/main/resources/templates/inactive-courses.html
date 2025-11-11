@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img-top {
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .btn {
+            border-radius: 6px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">LMS Application</a>
+        </div>
+    </nav>
+
+    <!-- 🏫 Page Content -->
+    <div class="container py-4">
+        <div class="page-header">
+            <h2 class="fw-bold text-primary">Inactive Courses</h2>
+            <p class="text-muted">Browse and manage all available courses</p>
+        </div>
+
+        <!-- 🔍 Search + Add -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <form th:action="@{/inactive/course/get}" method="get" class="d-flex w-50">
+                <input type="text" name="keyword" class="form-control me-2" placeholder="Search courses..."
+                    th:value="${keyword}">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+        </div>
+
+        <!-- 🎓 Course Cards -->
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            <div class="col" th:each="r : ${courses}">
+                <div class="card h-100 shadow-sm">
+                    <img th:src="@{/images/PgCourseImage.png}"
+                        class="card-img-top" alt="Course Image">
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${r.course.title}"></h5>
+                        <p class="card-text text-muted" th:text="${r.course.description}"></p>
+                        <p class="mb-1"><strong>Instructor:</strong> <span th:text="${r.course.instructor.name}"></span>
+                        </p>
+                        <p class="mb-1"><strong>Category:</strong> <span th:text="${r.course.courseCategory}"></span>
+                        </p>
+                        <p class="mb-1"><strong>Schedule:</strong> <span th:text="${r.course.courseSchedule}"></span>
+                        </p>
+                        <p class="mb-1"><strong>performed By:</strong> <span th:text="${r.performedBy}"></span></p>
+                        <p class="mb-1"><strong>Reason:</strong> <span th:text="${r.reason}"></span></p>
+                    </div>
+                    <div class="card-footer bg-white border-0 d-flex justify-content-between">
+                        <a th:href="@{/lesson/getByCourse/{id}(id=${r.id})}" class="btn btn-primary btn-sm">View
+                            Lessons</a>
+                        <a th:href="@{/enroll/students/{id}(id=${r.id})}" class="btn btn-success btn-sm">View
+                            Students</a>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(courses)}" class="text-center mt-4">
+                <p class="text-muted">No courses available</p>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <a th:href="@{/course/view}" class="btn btn-primary">Back</a>
+        </div>
+    </div>
+
+</body>
+
+</html>

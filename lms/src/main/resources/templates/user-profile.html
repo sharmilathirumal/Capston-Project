@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<style>
+        body {
+            background: linear-gradient(to right, #f8f9fa, #e9ecef);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-img-top {
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .btn {
+            border-radius: 6px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">LMS Application</a>
+        </div>
+    </nav>
+
+<div class="container py-5">
+    <div class="card mx-auto" style="max-width: 500px;">
+        <h3 class="text-center text-primary mb-4">My Profile</h3>
+
+        <!-- Username -->
+        <div class="mb-3">
+            <label class="form-label">Username</label>
+            <input type="text" th:value="${user.username}" class="form-control" readonly>
+        </div>
+
+        <!-- Password with eye icon -->
+        <div class="mb-3 position-relative">
+            <label class="form-label">Password</label>
+            <input type="password" id="passwordField" th:value="${user.password}" class="form-control" readonly>
+            <span class="password-toggle" onclick="togglePassword()">
+                👁️
+            </span>
+        </div>
+
+        <!-- Date of Joining -->
+        <div class="mb-3">
+            <label class="form-label">Date of Joining</label>
+            <input type="text" th:value="${#dates.format(user.createdDate, 'dd-MM-yyyy')}" class="form-control" readonly>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="d-flex justify-content-between mt-4">
+            <button class="btn btn-primary" onclick="updatePassword()">Update Password</button>
+            <button class="btn btn-danger" onclick="confirmDelete()">Delete Account</button>
+        </div>
+
+        <div class="text-center mt-3">
+            <a th:href="@{/dashboard}" class="btn btn-secondary">Back</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    function togglePassword() {
+        const field = document.getElementById("passwordField");
+        field.type = field.type === "password" ? "text" : "password";
+    }
+
+    function updatePassword() {
+        Swal.fire({
+            title: 'Change Password',
+            input: 'password',
+            inputLabel: 'Enter your new password',
+            inputPlaceholder: 'New password',
+            showCancelButton: true,
+            confirmButtonText: 'Update',
+            preConfirm: (newPassword) => {
+                if (!newPassword) {
+                    Swal.showValidationMessage('Password cannot be empty');
+                }
+                return fetch('/user/update-password', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({password: newPassword})
+                }).then(response => {
+                    if (!response.ok) throw new Error('Failed to update password');
+                });
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Password Updated!',
+                    text: 'Your password has been successfully changed.',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>
