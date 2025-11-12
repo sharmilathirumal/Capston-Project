@@ -1,17 +1,13 @@
-# Run this project with java:17
-FROM openjdk:17-jdk-slim
-
-# Set the working directory inside the container
+# ---------- Stage 1: Build ----------
+FROM maven:3.9.6-eclipse-temurin-21 AS build
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
+RUN mvn clean package -DskipTests
 
-# Copy the built jar file into the container
-COPY target/lms-0.0.1-SNAPSHOT.jar lms.jar
-
-# Create uploads directory for file uploads
-RUN mkdir -p /app/uploads
-
-# Expose port 8080 to the outside world
+# ---------- Stage 2: Run ----------
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
 EXPOSE 8080
-
-# Command to run the jar file
-ENTRYPOINT ["java", "-jar", "lms.jar"]
+ENTRYPOINT ["java","-jar","app.jar"]
