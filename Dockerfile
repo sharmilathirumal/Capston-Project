@@ -1,7 +1,7 @@
 # Step 1: Build the JAR using Maven + Java 17
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 WORKDIR /app
-COPY . .
+COPY lms/. .
 RUN mvn clean package -DskipTests
 
 # Step 2: Run the application using lightweight JDK
