@@ -20,4 +20,6 @@ public interface UserService {
     void setActive(Long id, boolean active);
 
     void updateUser(String username, User user);
+
+    void RegisterAdmin(String username,String Password,String confirmPassSword);
 }

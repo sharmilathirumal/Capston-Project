@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.lmsProject.lms.entity.User;
+import com.lmsProject.lms.enums.Role;
 import com.lmsProject.lms.repository.UserRepository;
 import com.lmsProject.lms.service.UserService;
 
@@ -79,5 +80,21 @@ public class UserServiceImpl implements UserService {
             .orElseThrow(() -> new RuntimeException("User not found"));
         existingUser.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(existingUser);
+    }
+
+    @Override
+    public void RegisterAdmin(String username,String Password,String confirmPassSword) {
+        if (userRepository.existsByUsername(username)) {
+            throw new RuntimeException("Username already exists");
+        }
+        if(!Password.equals(confirmPassSword)) {
+            throw new RuntimeException("Password and Confirm Password do not match");
+        }
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(passwordEncoder.encode(Password));
+        user.setRole(Role.ADMIN);
+        user.setActive(true);
+        userRepository.save(user);
     }
 }

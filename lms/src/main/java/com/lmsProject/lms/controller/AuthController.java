@@ -4,12 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.lmsProject.lms.entity.User;
 import com.lmsProject.lms.service.InstructorService;
 import com.lmsProject.lms.service.StudentService;
 import com.lmsProject.lms.service.UserService;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @Controller
 public class AuthController {
@@ -65,4 +70,22 @@ public class AuthController {
     public String logout() {
         return "redirect:/auth/login?logout";
     }
+
+    @GetMapping("/register")
+    public String showRegisterPage() {
+        //model.addAttribute("user", new User()); // Add a new User object to the model for registration form binding
+        return "index";
+    }
+    
+    @PostMapping("/register")
+    public String registerUser(@RequestParam String username, @RequestParam String password, @RequestParam String confirmPassword) {
+        try {
+            userService.RegisterAdmin(username, password, confirmPassword);
+            return "redirect:/login?registerSuccess";
+        } catch (RuntimeException e) {
+            return "redirect:/register?error=" + e.getMessage();
+        }
+        
+    }
+    
 }
