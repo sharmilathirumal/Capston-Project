@@ -71,54 +71,60 @@
 
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="#">LMS Application</a>
-    </div>
-</nav>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">LMS Application</a>
+        </div>
+    </nav>
 
-<div class="container py-5">
-    <div class="text-center">
-        <h1 class="page-title">Welcome to LMS</h1>
-        <p class="lead lead-text">
-            Only the Admin can register during the initial setup. After that, the Admin can add or remove Students and Instructors.
-        </p>
-    </div>
-
-    <div class="register-card mx-auto" style="max-width: 420px;">
-        <h3 class="text-center mb-4 fw-bold">Admin Register</h3>
-
-        <!-- Error Message -->
-        <div th:if="${param.error}" class="alert alert-danger text-center" role="alert">
-            Something went wrong. Please try again.
+    <div class="container py-5">
+        <div class="text-center">
+            <h1 class="page-title">Welcome to LMS</h1>
+            <p class="lead lead-text">
+                Only the Admin can register during the initial setup. After that, the Admin can add or remove Students
+                and Instructors.
+            </p>
         </div>
 
-        <form th:action="@{/register}" method="post">
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Username</label>
-                <input type="text" class="form-control" id="username" name="username"
-                       placeholder="Enter username" required autocomplete="username">
+        <div class="register-card mx-auto" style="max-width: 420px;">
+            <h3 class="text-center mb-4 fw-bold">Admin Register</h3>
+
+            <!-- Error Message -->
+            <div th:if="${error}" class="alert alert-danger text-center" role="alert">
+                <span th:text="${error}"></span>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Password</label>
-                <input type="password" class="form-control" id="password" name="password"
-                       placeholder="Enter password" required autocomplete="new-password">
+            <div th:if="${success}" class="alert alert-success text-center" role="alert">
+                <span th:text="${success}"></span>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label fw-semibold">Confirm Password</label>
-                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-                       placeholder="Re-enter password" required autocomplete="new-password">
-            </div>
+            <form th:action="@{/register}" method="post">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" placeholder="Enter username"
+                        required autocomplete="username">
+                </div>
 
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-custom">Register</button>
-                <a href="/login" class="btn btn-link text-center">Already have an account? Login</a>
-            </div>
-        </form>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Password</label>
+                    <input type="password" class="form-control" id="password" name="password"
+                        placeholder="Enter password" required autocomplete="new-password">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                        placeholder="Re-enter password" required autocomplete="new-password">
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-custom">Register</button>
+                    <a href="/login" class="btn btn-link text-center">Already have an account? Login</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
 </body>
+
 </html>

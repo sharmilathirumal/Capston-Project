@@ -6,15 +6,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lmsProject.lms.entity.User;
 import com.lmsProject.lms.service.InstructorService;
 import com.lmsProject.lms.service.StudentService;
 import com.lmsProject.lms.service.UserService;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 @Controller
 public class AuthController {
@@ -73,19 +70,37 @@ public class AuthController {
 
     @GetMapping("/register")
     public String showRegisterPage() {
-        //model.addAttribute("user", new User()); // Add a new User object to the model for registration form binding
+        // model.addAttribute("user", new User()); // Add a new User object to the model
+        // for registration form binding
         return "index";
     }
-    
+
     @PostMapping("/register")
-    public String registerUser(@RequestParam String username, @RequestParam String password, @RequestParam String confirmPassword) {
+    public String registerUser(@RequestParam String username,
+            @RequestParam String password,
+            @RequestParam String confirmPassword,
+            RedirectAttributes redirectAttributes) {
+
+        try {
+            userService.RegisterAdmin(username, password, confirmPassword);
+            redirectAttributes.addFlashAttribute("success", "Admin registered successfully!");
+            return "redirect:/login?registerSuccess";
+        } catch (RuntimeException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/register";
+        }
+    }
+
+   /*  @PostMapping("/register")
+    public String registerUser(@RequestParam String username, @RequestParam String password,
+            @RequestParam String confirmPassword) {
         try {
             userService.RegisterAdmin(username, password, confirmPassword);
             return "redirect:/login?registerSuccess";
         } catch (RuntimeException e) {
             return "redirect:/register?error=" + e.getMessage();
         }
-        
-    }
-    
+
+    }*/
+
 }
