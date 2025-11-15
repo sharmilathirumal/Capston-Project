@@ -44,9 +44,8 @@ public class InstructorDeactivationServiceImpl implements InstructorDeactivation
         instructor.setActive(false);
         User user = userService.getUserByUsername(instructor.getName());
         user.setActive(false);
-        userService.addUser(user);
         InstructorDeactivation instructorDeactivation = new InstructorDeactivation();
-        instructorDeactivation.setPerformedBy("Karmugil");
+        instructorDeactivation.setPerformedBy(deactivatedInstructor.getPerformedBy());
         instructorDeactivation.setInstructor(instructor);
         instructorDeactivation.setReason(deactivatedInstructor.getReason());
         instructorRepository.save(instructor);

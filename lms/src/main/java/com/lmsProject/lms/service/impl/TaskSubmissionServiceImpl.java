@@ -68,7 +68,7 @@ public class TaskSubmissionServiceImpl implements TaskSubmissionService {
     public List<TaskSubmission> getPendingSubmissionsForInstructor(Long instructorId) {
         Instructor instructor = instructorRepository.findById(instructorId)
                 .orElseThrow(() -> new RuntimeException("Instructor not found"));
-        return taskSubmissionRepository.findByInstructorId(instructor.getId());
+        return taskSubmissionRepository.getPendingSubmissionsForInstructor(instructor.getId());
     }
 
     @Override
@@ -110,6 +110,10 @@ public class TaskSubmissionServiceImpl implements TaskSubmissionService {
                 studentRepository.findById(studentId)
                         .orElseThrow(() -> new RuntimeException("Student not found"))
         );
+    }
+
+    public List<TaskSubmission> getAllPendingTasksOfInstructor(Long id){
+      return  taskSubmissionRepository.getPendingSubmissionsForInstructor(id);
     }
     
 }

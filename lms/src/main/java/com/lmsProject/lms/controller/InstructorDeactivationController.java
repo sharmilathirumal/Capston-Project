@@ -16,6 +16,8 @@ import com.lmsProject.lms.entity.InstructorDeactivation;
 import com.lmsProject.lms.entity.StudentDeactivation;
 import com.lmsProject.lms.service.InstructorDeactivationService;
 import com.lmsProject.lms.service.InstructorService;
+import com.lmsProject.lms.service.StudentService;
+import com.lmsProject.lms.util.AuthenticatedUserUtil;
 
 @Controller
 @RequestMapping("/instructor/deactivation")
@@ -26,6 +28,9 @@ public class InstructorDeactivationController {
 
     @Autowired
     private InstructorService instructorService;
+
+    @Autowired
+    private StudentService studentService;
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/view")
@@ -55,14 +60,14 @@ public class InstructorDeactivationController {
     public String showDeactivationForm(@PathVariable Long instructorId, Model model) {
         Instructor instructor = instructorService.getInstructorById(instructorId);
         model.addAttribute("instructor", instructor);
-       // model.addAttribute("deactivation", new InstructorDeactivation());
+        model.addAttribute("performedBy", new AuthenticatedUserUtil(instructorService, studentService).getLoggedInUser().getUsername());
         return "deactivate-instructor";
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/add/{id}")
     public ResponseEntity<?> deactivateInstructor(@PathVariable Long id,
-                                       @RequestBody InstructorDeactivation deactivation) {
+                                       @ModelAttribute InstructorDeactivation deactivation) {
         return ResponseEntity.ok().body(instructorDeactivationService.addInactiveInstructor(id, deactivation));
         
     }

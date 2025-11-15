@@ -55,7 +55,7 @@
     <div class="container py-4">
         <div class="card mt-3 mx-auto p-3" style="max-width: 28rem;">
             <h3 class="card-header text-center text-primary mb-3">Review task</h3>
-
+            <input type="hidden" id="instructorId" th:value="${instructorId}">
             <form id="enrollForm" class="form px-3 pb-3"
                 th:action="@{/taskSubmission/grade/{submissionId}(submissionId=${submission.id})}"
                 th:object="${submission}" method="post">
@@ -73,31 +73,53 @@
                 <div class="d-flex justify-content-between mt-4">
                     <a class="btn btn-danger"
                         th:href="@{/taskSubmission/pending/{id}(id=${instructorId})}">Cancel</a>
-                    <button type="button" class="btn btn-primary">Submit Review</button>
+                    <button type="button" class="btn btn-primary" id="submitReviewBtn">Submit Review</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!--sweetalert2 pop up when user submits the form with no confirmation just success message and if there is any error need to show that-->
+    
     <script>
-        document.querySelector(".btn-primary").addEventListener("click", function () {
-            const form = document.getElementById("enrollForm");
-            if (form.checkValidity()) {
-                event.preventDefault();
-                Swal.fire({
-                    title: "Success!",
-                    text: "Your review has been submitted successfully.",
-                    icon: "success",
-                    confirmButtonText: "OK"
-                }).then(() => {
-                    form.submit();
-                });
-            } else {
-                form.reportValidity();
-            }
+document.getElementById("submitReviewBtn").addEventListener("click", async function (event) {
+    event.preventDefault();
+
+    const form = document.getElementById("enrollForm");
+    const instructorId = document.getElementById("instructorId").value;
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    // Extract form data (FormData supports @RequestParam)
+    const formData = new FormData(form);
+
+    Swal.fire({
+        title: "Success!",
+        text: "Your review has been submitted successfully.",
+        icon: "success",
+        confirmButtonText: "OK"
+    }).then(async () => {
+
+        const response = await fetch(form.action, {
+            method: "POST",
+            body: formData
         });
-    </script>
+
+        if (response.ok) {
+            window.location.href = "/taskSubmission/pending/" + instructorId;
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Failed",
+                text: "Something went wrong. Please try again."
+            });
+        }
+    });
+});
+</script>
+
 </body>
 
 </html>

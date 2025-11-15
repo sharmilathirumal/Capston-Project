@@ -92,10 +92,11 @@
         </div>
     </div>
     <script>
-        function addFile() {
+        function addFile(event) {
+            event.preventDefault();
             let form = document.getElementById("fileForm");
             let requiredFields = form.querySelectorAll("input");
-            const redirectUrl = document.getElementById("redirectUrl");
+            const redirectUrl = document.getElementById("redirectUrl").value;
             for (let field of requiredFields) {
                 // handle file inputs differently
                 if (field.type === 'file') {

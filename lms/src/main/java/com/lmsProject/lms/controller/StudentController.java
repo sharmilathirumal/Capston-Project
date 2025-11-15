@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lmsProject.lms.entity.Student;
 import com.lmsProject.lms.service.StudentService;
-
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -29,25 +29,25 @@ import com.lmsProject.lms.service.StudentService;
 public class StudentController {
     @Autowired
     private StudentService studentService;
-    
+
     @PreAuthorize("hasAuthority('ROLE_STUDENT')")
     @GetMapping("/dashboard/{studentId}")
     public String viewStudentDashboard(@PathVariable Long studentId, Model model) {
         Student student = studentService.getStudent(studentId);
         model.addAttribute("student", student);
         return "student-dashboard";
-        }
+    }
 
-     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_INSTRUCTOR')")   
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_INSTRUCTOR')")
     @GetMapping("/view")
-    public String viewStudents(@RequestParam(value = "keyword",required = false) String keyword,Model model){
-         List<Student> students;
+    public String viewStudents(@RequestParam(value = "keyword", required = false) String keyword, Model model) {
+        List<Student> students;
         if (keyword != null && !keyword.isEmpty()) {
-            students = studentService.searchStudents(true,keyword);
+            students = studentService.searchStudents(true, keyword);
         } else {
             students = studentService.findByActiveState(true);
         }
-        //List<Student> students = studentService.searchStudents(keyword);
+        // List<Student> students = studentService.searchStudents(keyword);
         model.addAttribute("students", students);
         model.addAttribute("keyword", keyword);
         return "student-view";
@@ -55,44 +55,45 @@ public class StudentController {
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/add")
-    public String showAddStudentForm(){
+    public String showAddStudentForm() {
         return "add-student";
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/add")
-    public ResponseEntity<?> addStudent(@RequestBody Student student){
-        return ResponseEntity.ok(studentService.addStudent(student));
-    }       
+    public String addStudent(@ModelAttribute("student") Student student) {
+        studentService.addStudent(student);
+        return "redirect:/student/view";
+    }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/edit/{id}")
-    public String editStudentForm(@PathVariable Long id,Model model){
+    public String editStudentForm(@PathVariable Long id, Model model) {
         model.addAttribute("student", studentService.getStudent(id));
         return "update-student";
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/update")
-    public ResponseEntity<?> updateStudent(@ModelAttribute Student student){ 
+    public ResponseEntity<?> updateStudent(@ModelAttribute Student student) {
         return ResponseEntity.ok(studentService.updateStudent(student.getId(), student));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteStudent(@PathVariable Long id){  
+    public ResponseEntity<?> deleteStudent(@PathVariable Long id) {
         studentService.deleteStudent(id);
         return ResponseEntity.ok("Student deleted successfully");
     }
 
     @GetMapping("/get")
     @ResponseBody
-    public ResponseEntity<List<Student>> getAllStudents(){
+    public ResponseEntity<List<Student>> getAllStudents() {
         return ResponseEntity.ok(studentService.getAllStudents());
     }
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<?> getStudentById(@PathVariable Long id){ 
+    public ResponseEntity<?> getStudentById(@PathVariable Long id) {
         return ResponseEntity.ok(studentService.getStudent(id));
     }
 

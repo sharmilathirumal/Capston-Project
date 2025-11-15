@@ -32,9 +32,9 @@ public class InstructorServiceImpl implements InstructorService {
             throw new RuntimeException("Instructor with this phone number already exists");
         }
         User user = new User();
-        long id = instructorRepository.count()+1;
+        //long id = instructorRepository.count()+1;
         user.setUsername(instructor.getName());
-        user.setPassword(passwordEncoder.encode(instructor.getName()+"#"+id+"@!"));
+        user.setPassword(passwordEncoder.encode(instructor.getName()+"@123"));
         user.setRole(Role.INSTRUCTOR);
         userService.addUser(user);
         instructor.setUser(user);

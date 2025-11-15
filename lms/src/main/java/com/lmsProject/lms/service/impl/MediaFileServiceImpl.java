@@ -1,6 +1,7 @@
 package com.lmsProject.lms.service.impl;
 
 import java.io.IOException;
+import java.lang.StackWalker.Option;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,9 +17,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.lmsProject.lms.entity.Lesson;
 import com.lmsProject.lms.entity.MediaFile;
+import com.lmsProject.lms.entity.TaskSubmission;
 import com.lmsProject.lms.enums.FilePurpose;
 import com.lmsProject.lms.repository.LessonRepository;
 import com.lmsProject.lms.repository.MediaFileRepository;
+import com.lmsProject.lms.repository.TaskSubmissionRepository;
 import com.lmsProject.lms.service.MediaFileService;
 
 @Service
@@ -28,7 +31,9 @@ public class MediaFileServiceImpl implements MediaFileService {
 
     @Autowired
     private LessonRepository lessonRepository;
-    // private String UPLOAD_DIR = "uploads/";
+    
+    @Autowired
+    private TaskSubmissionRepository taskSubmissionRepository;
 
     @Override
     public MediaFile uploadFile(MultipartFile file, String title, String description, Long lessonId, FilePurpose filePurpose) {
@@ -85,6 +90,10 @@ public class MediaFileServiceImpl implements MediaFileService {
         Optional<MediaFile> mediaFileOpt = mediaFileRepository.findById(id);
         if (mediaFileOpt.isPresent()) {
             MediaFile mediaFile = mediaFileOpt.get();
+            Optional<TaskSubmission> task = taskSubmissionRepository.findByTaskId(id);
+            if(task.isPresent()){
+                taskSubmissionRepository.deleteById(task.get().getId());
+            }
             try {
                 Files.deleteIfExists(Paths.get(mediaFile.getFileUrl()));
             } catch (IOException e) {

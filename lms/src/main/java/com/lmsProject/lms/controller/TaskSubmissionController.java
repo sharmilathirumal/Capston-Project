@@ -1,6 +1,7 @@
 package com.lmsProject.lms.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -97,21 +98,19 @@ public class TaskSubmissionController {
 
     @PreAuthorize("hasAuthority('ROLE_INSTRUCTOR')")
     @PostMapping("/grade/{submissionId}")
-    public String gradeSubmission(@PathVariable Long submissionId,
+    public ResponseEntity<?> gradeSubmission(@PathVariable Long submissionId,
                                   @RequestParam Integer marks,
                                   @RequestParam String feedback) {
         taskSubmissionService.gradeSubmission(submissionId, marks, feedback);
-        return "redirect:/taskSubmission/viewByTask";
+        return ResponseEntity.ok().body("Task Reviewed Successfully");
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_INSTRUCTOR')")
+    @PreAuthorize("hasAuthority('ROLE_INSTRUCTOR')")
     @GetMapping("/pending/{instructorId}")
     public String viewPendingSubmissionsForInstructor(@PathVariable Long instructorId, Model model) {
         LoggedInUserDTO loggedInUser = new AuthenticatedUserUtil(instructorService, studentService).getLoggedInUser();
         if(loggedInUser.getRole().equals("INSTRUCTOR")) {
             model.addAttribute("user", instructorService.getInstructorById(loggedInUser.getId()));
-        }else{
-            model.addAttribute("user", 7L);
         }
         List<TaskSubmission> pendingSubmissions = taskSubmissionService.getPendingSubmissionsForInstructor(instructorId);
         model.addAttribute("pendingSubmissions", pendingSubmissions);

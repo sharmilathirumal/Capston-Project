@@ -89,10 +89,6 @@
                                     <button class="btn btn-danger btn-sm" th:onclick="'removeFile(' + ${r.id} + ')'">
                                         Remove
                                     </button>
-                                    <a class="btn btn-success btn-sm"
-                                        th:href="@{/taskSubmission/view/{id}(id=${r.id})}">
-                                        Evaluate
-                                    </a>
                                 </div>
 
                                 <div th:if="${loggedInUser.role == 'STUDENT'}">

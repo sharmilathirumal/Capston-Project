@@ -57,11 +57,11 @@
         <div class="card shadow p-4">
             <h3 class="text-center mb-4 text-danger">Inactive Instructors</h3>
 
-            <form id="deactivateForm" th:data-instructor-id="${instructor.id}">
+            <form id="instructorDeactivateForm" th:data-instructor-id="${instructor.id}">
                 <div class="mb-3">
                     <label for="performedBy" class="form-label">Performed By</label>
-                    <input type="text" id="performedBy" name="performedBy" class="form-control" placeholder="Admin name"
-                        required>
+                    <input type="text" id="performedBy" name="performedBy" class="form-control"
+                        th:value="${performedBy}" readonly required>
                 </div>
 
                 <div class="mb-3">
@@ -78,33 +78,33 @@
     </div>
 
     <script>
-        document.getElementById('deactivateForm').addEventListener('submit', async (e) => {
+        document.getElementById('instructorDeactivateForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const instructorId = e.target.getAttribute('data-instructor-id');
-            const performedBy = document.getElementById('performedBy').value;
-            const reason = document.getElementById('reason').value;
+
+            // Use FormData for @ModelAttribute
+            const formData = new FormData(e.target);
 
             const response = await fetch(`/instructor/deactivation/add/${instructorId}`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ performedBy, reason })
+                body: formData
             });
 
             if (response.ok) {
                 Swal.fire({
                     icon: 'success',
                     title: 'Instructor Deactivated',
-                    text: 'The instructor has been successfully deactivated!',
-                    confirmButtonColor: '#3085d6'
+                    text: 'The instructor has been successfully deactivated!'
                 }).then(() => {
                     window.location.href = '/instructor/view';
                 });
             } else {
+                const errorMsg = await response.text();
                 Swal.fire({
                     icon: 'error',
                     title: 'Failed',
-                    text: 'Something went wrong. Please try again.'
+                    text: errorMsg || 'Something went wrong. Please try again.'
                 });
             }
         });

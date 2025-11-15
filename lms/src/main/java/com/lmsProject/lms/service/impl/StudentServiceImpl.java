@@ -31,7 +31,7 @@ public class StudentServiceImpl implements StudentService{
         User user = new User();
         user.setUsername(student.getName());
         user.setRole(Role.STUDENT);
-        user.setPassword(passwordEncoder.encode(student.getName()+"%"+id+"#!"));
+        user.setPassword(passwordEncoder.encode(student.getName()+"@123"));
         userService.addUser(user);
         student.setUser(user);
         return studentRepositoy.save(student);

@@ -79,8 +79,10 @@
     <script>
         function addStudent(event) {
             event.preventDefault();
+
             const name = document.getElementById("name").value.trim();
             const email = document.getElementById("email").value.trim();
+
             if (!name || !email) {
                 Swal.fire({
                     icon: "warning",
@@ -89,55 +91,47 @@
                 });
                 return;
             }
-            const myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json");
 
-            const student = {
-                name: name,
-                email: email
-            };
-            const raw = JSON.stringify(student);
-            const requestOptions = {
+            // Create form-data so @ModelAttribute can bind correctly
+            const formData = new FormData();
+            formData.append("name", name);
+            formData.append("email", email);
+
+            fetch("/student/add", {
                 method: "POST",
-                headers: myHeaders,
-                body: raw,
-                redirect: "follow"
-            };
-
-            fetch(`http://localhost:8080/student/add`, requestOptions)
-                .then((response) => {
+                body: formData
+            })
+                .then(response => {
                     if (!response.ok) {
-                        return response.text().then((message) => {
-                            console.log(message);
-                            throw new Error(message);
-                        });
+                        return response.text().then(message => { throw new Error(message); });
                     }
                     return response.text();
                 })
-                .then((result) => {
+                .then(() => {
                     Swal.fire({
                         icon: "success",
                         title: "Student Added!",
-                        text: "this student has been added successfully.!",
+                        text: "This student has been added successfully!",
                         showConfirmButton: false,
                         timer: 1500
                     }).then(() => {
-                        window.location.href = "/student/view"
+                        window.location.href = "/student/view";
                     });
-                }).catch((error) => {
+                })
+                .catch(error => {
                     Swal.fire({
                         icon: "error",
                         title: "Error",
-                        text: error.message || "Something went worng. Please try again."
+                        text: error.message || "Something went wrong. Please try again."
                     });
                 });
         }
 
-
         function moveToHome() {
-            window.location.href = "/student/view"
+            window.location.href = "/student/view";
         }
     </script>
+
 </body>
 
 </html>

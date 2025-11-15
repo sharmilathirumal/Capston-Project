@@ -33,12 +33,11 @@ public class StudentDeactivationServiceImpl implements StudentDeactivationServic
         studentRepositoy.save(student);
         User user = userService.getUserByUsername(student.getName());
         user.setActive(false);
-        userService.addUser(user);
         StudentDeactivation studentDeactivation = new StudentDeactivation();
         studentDeactivation.setStudent(student);
         studentDeactivation.setReason(deactivatedStudent.getReason());
         studentDeactivation.setCount(1);
-        studentDeactivation.setPerformedBy("Raja");
+        studentDeactivation.setPerformedBy(deactivatedStudent.getPerformedBy());
         return studentDeactivationRepository.save(studentDeactivation);
     }
 

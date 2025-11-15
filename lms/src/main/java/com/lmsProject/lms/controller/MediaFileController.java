@@ -82,7 +82,7 @@ public class MediaFileController {
         return new ResponseEntity<>(mediaFile, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_INSTRUCTOR','ROLE_STUDENT')")
+    @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_INSTRUCTOR')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteMediaFile(@PathVariable Long id) {
         mediaFileService.deleteMediaFile(id);
@@ -95,7 +95,7 @@ public class MediaFileController {
         Lesson lesson = lessonService.getLessonById(lessonId);
         LoggedInUserDTO loggedInUser = new AuthenticatedUserUtil(instructorService, studentService).getLoggedInUser();
         model.addAttribute("loggedInUser", loggedInUser);
-        model.addAttribute("files", mediaFileService.getMediaFilesByLessonId(lessonId));
+        model.addAttribute("files", mediaFileService.getMediaFilesByPurpose(lessonId, FilePurpose.COURSE_MATERIAL));
         model.addAttribute("lessonId", lesson.getId());
         model.addAttribute("courseId", lesson.getCourse().getId());
         return "material-tasks";
@@ -104,7 +104,7 @@ public class MediaFileController {
     @PreAuthorize("hasAnyAuthority('ROLE_ADMIN','ROLE_INSTRUCTOR','ROLE_STUDENT')")
     @GetMapping("viewByLesson/{lessonId}")
     public String getAllFilesOfLessons(@PathVariable Long lessonId,Model model){
-        model.addAttribute("files", mediaFileService.getMediaFilesByLessonId(lessonId));
+        model.addAttribute("files", mediaFileService.getMediaFilesByPurpose(lessonId, FilePurpose.COURSE_MATERIAL));
         model.addAttribute("lessonId", lessonId);
          LoggedInUserDTO loggedInUser = new AuthenticatedUserUtil(instructorService, studentService).getLoggedInUser();
         model.addAttribute("loggedInUser", loggedInUser);

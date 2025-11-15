@@ -1,6 +1,7 @@
 package com.lmsProject.lms.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,8 +15,6 @@ import com.lmsProject.lms.entity.TaskSubmission;
 public interface TaskSubmissionRepository extends JpaRepository<TaskSubmission, Long> {
 
   List<TaskSubmission> findByStudentId(Long studentId);
-
-  TaskSubmission findByTaskId(Long taskId);
 
   List<TaskSubmission> findByInstructorId(Long instructorId);
 
@@ -40,13 +39,17 @@ public interface TaskSubmissionRepository extends JpaRepository<TaskSubmission, 
       """)
   Long findInstructorIdBySubmissionId(@Param("submissionId") Long submissionId);
 
- @Query("SELECT ts FROM TaskSubmission ts " +
-       "JOIN FETCH ts.task m " + 
-       "JOIN FETCH m.lesson l " + 
-       "WHERE ts.id = :id")
-TaskSubmission findWithLesson(@Param("id") Long id);
+  @Query("SELECT ts FROM TaskSubmission ts " +
+      "JOIN FETCH ts.task m " +
+      "JOIN FETCH m.lesson l " +
+      "WHERE ts.id = :id")
+  TaskSubmission findWithLesson(@Param("id") Long id);
 
-boolean existsByTaskAndStudent(MediaFile task, Student student);
+  boolean existsByTaskAndStudent(MediaFile task, Student student);
 
+@Query("SELECT ts FROM TaskSubmission ts WHERE ts.instructor.id=:instructorId AND ts.marks IS NULL")
+  List<TaskSubmission> findPendingReviews(@Param("instructorId") Long instructorId);
+
+  Optional<TaskSubmission> findByTaskId(Long id);
 
 }

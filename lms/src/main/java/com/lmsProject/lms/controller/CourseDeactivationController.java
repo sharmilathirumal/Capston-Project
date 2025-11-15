@@ -20,6 +20,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.lmsProject.lms.entity.CourseDeactivation;
 import com.lmsProject.lms.entity.StudentDeactivation;
 import com.lmsProject.lms.service.CourseDeactivationService;
+import com.lmsProject.lms.service.InstructorService;
+import com.lmsProject.lms.service.StudentService;
+import com.lmsProject.lms.util.AuthenticatedUserUtil;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -31,10 +34,17 @@ public class CourseDeactivationController {
     @Autowired
     public com.lmsProject.lms.service.CourseService courseService;
 
+    @Autowired
+    private InstructorService instructorService;
+
+    @Autowired
+    private StudentService studentService;
+
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/add/{id}")
     public String showForm(@PathVariable Long id,Model model){
         model.addAttribute("course",courseService.getCourseById(id));
+        model.addAttribute("performedBy", new AuthenticatedUserUtil(instructorService, studentService).getLoggedInUser().getUsername());
         return "deactivate-course";
     }
 

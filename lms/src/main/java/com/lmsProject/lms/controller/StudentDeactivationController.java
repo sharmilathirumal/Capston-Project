@@ -11,6 +11,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.lmsProject.lms.entity.Student;
 import com.lmsProject.lms.entity.StudentDeactivation;
+import com.lmsProject.lms.service.InstructorService;
 import com.lmsProject.lms.service.StudentDeactivationService;
 import com.lmsProject.lms.service.StudentService;
+import com.lmsProject.lms.util.AuthenticatedUserUtil;
+import com.lmsProject.lms.util.LoggedInUserDTO;
 
 @Controller
 @CrossOrigin(origins = "*")
@@ -32,6 +36,9 @@ public class StudentDeactivationController {
 
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private InstructorService instructorService;
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @GetMapping("/get")
@@ -72,6 +79,8 @@ public class StudentDeactivationController {
     @GetMapping("/add/{studentId}")
     public String showDeactivateForm(@PathVariable Long studentId, Model model) {
         Student student = studentService.getStudent(studentId);
+        LoggedInUserDTO loggedInUser = new AuthenticatedUserUtil(instructorService, studentService).getLoggedInUser();
+       model.addAttribute("performedBy", loggedInUser.getUsername());
         model.addAttribute("student", student);
         return "deactivate-student";
     }
@@ -79,7 +88,7 @@ public class StudentDeactivationController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/add/{studentId}")
     public ResponseEntity<?> deactivateStudent(@PathVariable Long studentId,
-            @RequestBody StudentDeactivation studentDeactivation) {
+            @ModelAttribute StudentDeactivation studentDeactivation) {
         return ResponseEntity.ok().body(studentDeactivationService.deactivateStudent(studentId, studentDeactivation));
     }
 
