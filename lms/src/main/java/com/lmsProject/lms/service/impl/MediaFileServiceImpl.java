@@ -90,7 +90,7 @@ public class MediaFileServiceImpl implements MediaFileService {
         Optional<MediaFile> mediaFileOpt = mediaFileRepository.findById(id);
         if (mediaFileOpt.isPresent()) {
             MediaFile mediaFile = mediaFileOpt.get();
-            Optional<TaskSubmission> task = taskSubmissionRepository.findByTaskId(id);
+            Optional<TaskSubmission> task = taskSubmissionRepository.findByTaskIdIfPresent(id);
             if(task.isPresent()){
                 taskSubmissionRepository.deleteById(task.get().getId());
             }

@@ -18,6 +18,8 @@ public interface TaskSubmissionRepository extends JpaRepository<TaskSubmission, 
 
   List<TaskSubmission> findByInstructorId(Long instructorId);
 
+  TaskSubmission findByTaskId(Long id);
+
   @Query("""
           SELECT ts
           FROM TaskSubmission ts
@@ -50,6 +52,7 @@ public interface TaskSubmissionRepository extends JpaRepository<TaskSubmission, 
 @Query("SELECT ts FROM TaskSubmission ts WHERE ts.instructor.id=:instructorId AND ts.marks IS NULL")
   List<TaskSubmission> findPendingReviews(@Param("instructorId") Long instructorId);
 
-  Optional<TaskSubmission> findByTaskId(Long id);
+  @Query("SELECT ts FROM TaskSubmission ts WHERE ts.id=:id")
+  Optional<TaskSubmission> findByTaskIdIfPresent(Long id);
 
 }
